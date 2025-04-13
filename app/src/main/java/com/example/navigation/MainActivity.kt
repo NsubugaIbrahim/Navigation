@@ -5,7 +5,6 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -17,25 +16,15 @@ import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Star
-import androidx.compose.material3.BottomAppBar
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.focusModifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
@@ -58,13 +47,19 @@ class MainActivity : ComponentActivity() {
                     NavHost(
                         navController = navController,
                         startDestination = "favorites",
-                        modifier = Modifier.padding(paddingValues)) {
+                        modifier = Modifier.padding(paddingValues)
+                    ) {
                         composable("favorites") {
                             Favorites()
                         }
-
                         composable("things") {
                             Things()
+                        }
+                        composable("routines") {
+                            Routines()
+                        }
+                        composable("settings") {
+                            Settings()
                         }
                     }
                 }
@@ -75,7 +70,6 @@ class MainActivity : ComponentActivity() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-
 fun MyTopAppBar(navController: NavController) {
     TopAppBar(
         title = {
@@ -90,18 +84,17 @@ fun MyTopAppBar(navController: NavController) {
                 modifier = Modifier.fillMaxWidth()
             )
         },
-        actions = { // Use actions to place icons on the right
+        actions = {
             val currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
-
             if (currentRoute == "favorites") {
-                IconButton(onClick = { /* Add action if needed */ }) {
+                IconButton(onClick = { /* TODO: Add action */ }) {
                     Icon(imageVector = Icons.Default.Edit, contentDescription = "Add Favorite", tint = Color.White)
                 }
             } else if (currentRoute == "things") {
-                IconButton(onClick = { /* Action */ }) {
+                IconButton(onClick = { /* TODO: Action */ }) {
                     Icon(imageVector = Icons.Default.Search, contentDescription = "Search Things", tint = Color.White)
                 }
-                IconButton(onClick = { /* Action */ }) {
+                IconButton(onClick = { /* TODO: Action */ }) {
                     Icon(imageVector = Icons.Default.Menu, contentDescription = "Menu", tint = Color.White)
                 }
             }
@@ -128,7 +121,7 @@ fun MyBottomAppBar(navController: NavController) {
                 onClick = { navController.navigate(item.route) },
                 modifier = Modifier.weight(1f)
             ) {
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {  // ✅ Align content vertically
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Icon(
                         imageVector = item.icon,
                         contentDescription = item.label,
@@ -136,7 +129,7 @@ fun MyBottomAppBar(navController: NavController) {
                     )
                     Text(
                         text = item.label,
-                        fontSize = 12.sp,  // ✅ Reduce font size to fit properly
+                        fontSize = 12.sp,
                         color = Color.Black
                     )
                 }
@@ -146,5 +139,3 @@ fun MyBottomAppBar(navController: NavController) {
 }
 
 data class BottomNavItem(val route: String, val icon: ImageVector, val label: String)
-
-
