@@ -1,10 +1,12 @@
 package com.example.navigation
 
 import android.app.TimePickerDialog
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -16,39 +18,36 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
 
 @Composable
 @Preview
 fun Routines() {
-    val context = LocalContext.current
-
     // Routine data model
     data class Routine(val name: String, val time: String, val recurrence: String)
 
     val pickedTime = remember { mutableStateOf(LocalTime.now()) }
     val routines = remember { mutableStateListOf<Routine>() }
 
+    var showDialog by remember { mutableStateOf(false) }
+
+    var showEditDialog by remember { mutableStateOf(false) }
+    var routineToEditIndex by remember { mutableStateOf(-1) }
+
     Scaffold(
         floatingActionButton = {
             FloatingActionButton(
                 onClick = {
-                    // Add a new routine with dummy data for simplicity
-                    routines.add(
-                        Routine(
-                            name = "Secure Lights On",
-                            time = pickedTime.value.format(DateTimeFormatter.ofPattern("hh:mm a")),
-                            recurrence = "Weekdays"
-                        )
-                    )
+                        showDialog = true
                 },
                 containerColor = MaterialTheme.colorScheme.primary
             ) {
-                Icon(Icons.Default.Refresh, contentDescription = "Add Routine")
+                Icon(Icons.Default.Add, contentDescription = "Add Routine")
             }
         }
     ) { paddingValues ->
         if (routines.isEmpty()) {
-            // Empty State
             Column(
                 modifier = Modifier
                     .fillMaxSize()
@@ -67,24 +66,48 @@ fun Routines() {
                 Text("Click the '+' button below to get started")
             }
         } else {
-            // Populated List
             LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(paddingValues)
                     .padding(12.dp)
             ) {
-                items(routines) { routine ->
+                items(routines.size) { index ->
+                    val routine = routines[index]
                     Card(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(vertical = 6.dp),
                         elevation = CardDefaults.cardElevation(4.dp)
                     ) {
-                        Column(modifier = Modifier.padding(12.dp)) {
+                        Column(
+                            modifier = Modifier
+                                .padding(12.dp)
+                        ) {
                             Text("Task Name: ${routine.name}", fontWeight = FontWeight.Bold)
                             Text("Timing: ${routine.time}")
                             Text("Recurrence: ${routine.recurrence}")
+                            Spacer(modifier = Modifier.height(8.dp))
+                            Row(
+                                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                            ) {
+                                OutlinedButton(onClick = {
+                                    routineToEditIndex = index
+                                    showEditDialog = true
+                                }) {
+                                    Text("Edit")
+                                }
+                                OutlinedButton(
+                                    onClick = {
+                                        routines.removeAt(index)
+                                    },
+                                    colors = ButtonDefaults.outlinedButtonColors(
+                                        contentColor = MaterialTheme.colorScheme.error
+                                    )
+                                ) {
+                                    Text("Delete")
+                                }
+                            }
                         }
                     }
                 }
@@ -92,17 +115,148 @@ fun Routines() {
         }
     }
 
-    // You can add your Pickers and fields if you want dynamic input before adding
-    // Example of using Pickers:
-    LaunchedEffect(Unit) {
-        TimePickerDialog(
-            context,
-            { _, hour, minute ->
-                pickedTime.value = LocalTime.of(hour, minute)
+        // Dialog for adding routine
+        if (showDialog) {
+            AddRoutineDialog(
+                onAdd = { name, time, recurrence ->
+                    routines.add(Routine(name, time, recurrence))
+                    showDialog = false
+                },
+                onCancel = { showDialog = false }
+            )
+        }
+    //Dialog for editing Routine
+    if (showEditDialog) {
+        val routineToEdit = routines[routineToEditIndex]
+        AddRoutineDialog(
+            onAdd = { name, time, recurrence ->
+                routines[routineToEditIndex] = Routine(name, time, recurrence)
+                showEditDialog = false
             },
-            pickedTime.value.hour,
-            pickedTime.value.minute,
-            true
+            onCancel = { showEditDialog = false },
+            initialName = routineToEdit.name,
+            initialTime = routineToEdit.time,
+            initialRecurrence = routineToEdit.recurrence
         )
     }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun AddRoutineDialog(
+    onAdd: (String, String, String) -> Unit,
+    onCancel: () -> Unit,
+    initialName: String = "",
+    initialTime: String = LocalTime.now().format(DateTimeFormatter.ofPattern("hh:mm a")),
+    initialRecurrence: String = "Daily"
+) {
+    val context = LocalContext.current
+
+    var name by remember { mutableStateOf(initialName) }
+
+    var time by remember {
+        mutableStateOf(
+            try {
+                LocalTime.parse(initialTime, DateTimeFormatter.ofPattern("hh:mm a"))
+            } catch (e: Exception) {
+                LocalTime.now()
+            }
+        )
+    }
+    var showTimePicker by remember { mutableStateOf(false) }
+
+    val recurrenceOptions = listOf("Daily", "Weekdays", "Weekends", "Weekly", "Monthly")
+    var selectedRecurrence by remember {
+        mutableStateOf(if (initialRecurrence in recurrenceOptions) initialRecurrence else recurrenceOptions[0])
+    }
+    var expanded by remember { mutableStateOf(false) }
+
+    if (showTimePicker) {
+        LaunchedEffect(Unit) {
+            TimePickerDialog(
+                context,
+                { _, hour, minute ->
+                    time = LocalTime.of(hour, minute)
+                    showTimePicker = false
+                },
+                time.hour,
+                time.minute,
+                true
+            ).show()
+        }
+    }
+
+    AlertDialog(
+        onDismissRequest = onCancel,
+        title = { Text(if (initialName.isEmpty()) "Add New Routine" else "Edit Routine") },
+        text = {
+            Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                OutlinedTextField(
+                    value = name,
+                    onValueChange = { name = it },
+                    label = { Text("Routine Name") },
+                    singleLine = true,
+                    modifier = Modifier.fillMaxWidth()
+                )
+                OutlinedTextField(
+                    value = time.format(DateTimeFormatter.ofPattern("hh:mm a")),
+                    onValueChange = {},
+                    label = { Text("Pick Time") },
+                    readOnly = true,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable { showTimePicker = true }
+                )
+                ExposedDropdownMenuBox(
+                    expanded = expanded,
+                    onExpandedChange = { expanded = !expanded }
+                ) {
+                    OutlinedTextField(
+                        value = selectedRecurrence,
+                        onValueChange = {},
+                        readOnly = true,
+                        label = { Text("Recurrence") },
+                        trailingIcon = {
+                            ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
+                        },
+                        modifier = Modifier
+                            .menuAnchor()
+                            .fillMaxWidth()
+                    )
+                    ExposedDropdownMenu(
+                        expanded = expanded,
+                        onDismissRequest = { expanded = false }
+                    ) {
+                        recurrenceOptions.forEach { option ->
+                            DropdownMenuItem(
+                                text = { Text(option) },
+                                onClick = {
+                                    selectedRecurrence = option
+                                    expanded = false
+                                }
+                            )
+                        }
+                    }
+                }
+            }
+        },
+        confirmButton = {
+            Button(onClick = {
+                if (name.isNotBlank()) {
+                    onAdd(
+                        name,
+                        time.format(DateTimeFormatter.ofPattern("hh:mm a")),
+                        selectedRecurrence
+                    )
+                }
+            }) {
+                Text("Save")
+            }
+        },
+        dismissButton = {
+            OutlinedButton(onClick = onCancel) {
+                Text("Cancel")
+            }
+        }
+    )
 }
