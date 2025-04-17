@@ -1,5 +1,6 @@
 package com.example.navigation
 
+import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -18,8 +19,32 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.longPreferencesKey
+import androidx.datastore.preferences.preferencesDataStore
+
+private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
+
+class ColorPreference(private val context: Context) {
+    private val APP_COLOR_KEY = longPreferencesKey("app_color")
+
+    val appColor: Flow<Long> = context.dataStore.data
+        .map { preferences ->
+            preferences[APP_COLOR_KEY] ?: 0xFFFFC107 // Default color
+        }
+
+    suspend fun saveAppColor(color: Long) {
+        context.dataStore.edit { preferences ->
+            preferences[APP_COLOR_KEY] = color
+        }
+    }
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -114,7 +139,7 @@ fun Settings(modifier: Modifier = Modifier) {
                     Box(
                         modifier = Modifier
                             .size(24.dp)
-                            .background(Color(selectedColorState.toLong()))
+                            .background(Color(selectedColorState))
                             .padding(4.dp)
                     )
                 },
