@@ -21,26 +21,29 @@ import java.time.format.DateTimeFormatter
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 
+data class Routine(val name: String, val time: String, val recurrence: String)
+
 @Composable
 @Preview
 fun Routines() {
-    // Routine data model
-    data class Routine(val name: String, val time: String, val recurrence: String)
-
-    val pickedTime = remember { mutableStateOf(LocalTime.now()) }
+    val context = LocalContext.current
+    val dbHelper = remember { RoutineDatabaseHelper(context) }
     val routines = remember { mutableStateListOf<Routine>() }
-
+    val pickedTime = remember { mutableStateOf(LocalTime.now()) }
     var showDialog by remember { mutableStateOf(false) }
-
     var showEditDialog by remember { mutableStateOf(false) }
     var routineToEditIndex by remember { mutableStateOf(-1) }
+
+    // Load routines from database when composable is first created
+    LaunchedEffect(Unit) {
+        routines.clear()
+        routines.addAll(dbHelper.getAllRoutines())
+    }
 
     Scaffold(
         floatingActionButton = {
             FloatingActionButton(
-                onClick = {
-                        showDialog = true
-                },
+                onClick = { showDialog = true },
                 containerColor = MaterialTheme.colorScheme.primary
             ) {
                 Icon(Icons.Default.Add, contentDescription = "Add Routine")
@@ -99,6 +102,7 @@ fun Routines() {
                                 }
                                 OutlinedButton(
                                     onClick = {
+                                        dbHelper.deleteRoutine(index + 1)
                                         routines.removeAt(index)
                                     },
                                     colors = ButtonDefaults.outlinedButtonColors(
@@ -115,22 +119,25 @@ fun Routines() {
         }
     }
 
-        // Dialog for adding routine
-        if (showDialog) {
-            AddRoutineDialog(
-                onAdd = { name, time, recurrence ->
-                    routines.add(Routine(name, time, recurrence))
-                    showDialog = false
-                },
-                onCancel = { showDialog = false }
-            )
-        }
-    //Dialog for editing Routine
+    if (showDialog) {
+        AddRoutineDialog(
+            onAdd = { name, time, recurrence ->
+                val routine = Routine(name, time, recurrence)
+                dbHelper.addRoutine(routine)
+                routines.add(routine)
+                showDialog = false
+            },
+            onCancel = { showDialog = false }
+        )
+    }
+
     if (showEditDialog) {
         val routineToEdit = routines[routineToEditIndex]
         AddRoutineDialog(
             onAdd = { name, time, recurrence ->
-                routines[routineToEditIndex] = Routine(name, time, recurrence)
+                val updatedRoutine = Routine(name, time, recurrence)
+                dbHelper.updateRoutine(routineToEditIndex + 1, updatedRoutine)
+                routines[routineToEditIndex] = updatedRoutine
                 showEditDialog = false
             },
             onCancel = { showEditDialog = false },

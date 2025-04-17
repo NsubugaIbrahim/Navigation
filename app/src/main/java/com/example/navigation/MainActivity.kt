@@ -32,6 +32,10 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.navigation.ui.theme.NavigationTheme
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.collectAsState
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -71,6 +75,10 @@ class MainActivity : ComponentActivity() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MyTopAppBar(navController: NavController) {
+    val context = LocalContext.current
+    val colorPreference = remember { ColorPreference(context) }
+    val selectedColorState = colorPreference.appColor.collectAsStateWithLifecycle(initialValue = 0xFFFFC107)
+
     TopAppBar(
         title = {
             Text(
@@ -99,7 +107,7 @@ fun MyTopAppBar(navController: NavController) {
                 }
             }
         },
-        colors = TopAppBarDefaults.topAppBarColors(containerColor = Color(0xFFFFC107))
+        colors = TopAppBarDefaults.topAppBarColors(containerColor = Color(selectedColorState.value))
     )
 }
 
