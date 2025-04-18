@@ -18,6 +18,9 @@ import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -36,6 +39,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.collectAsState
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.navigation.SettingsDatabaseHelper.Settings
+import com.example.navigation.Settings as SettingsScreen
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -62,8 +67,11 @@ class MainActivity : ComponentActivity() {
                         composable("routines") {
                             Routines()
                         }
+                        composable("ideas"){
+                            Ideas()
+                        }
                         composable("settings") {
-                            Settings()
+                            SettingsScreen()
                         }
                     }
                 }
@@ -76,8 +84,8 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun MyTopAppBar(navController: NavController) {
     val context = LocalContext.current
-    val colorPreference = remember { ColorPreference(context) }
-    val selectedColorState = colorPreference.appColor.collectAsStateWithLifecycle(initialValue = 0xFFFFC107)
+    val database = remember { SettingsDatabaseHelper(context) }
+    var settings by remember { mutableStateOf(database.getSettings()) }
 
     TopAppBar(
         title = {
@@ -107,7 +115,7 @@ fun MyTopAppBar(navController: NavController) {
                 }
             }
         },
-        colors = TopAppBarDefaults.topAppBarColors(containerColor = Color(selectedColorState.value))
+        colors = TopAppBarDefaults.topAppBarColors(containerColor = Color(settings.appColor))
     )
 }
 
