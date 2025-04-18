@@ -20,6 +20,7 @@ import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
+import androidx.compose.foundation.interaction.MutableInteractionSource
 
 data class Routine(val name: String, val time: String, val recurrence: String)
 
@@ -160,17 +161,7 @@ fun AddRoutineDialog(
     val context = LocalContext.current
 
     var name by remember { mutableStateOf(initialName) }
-
-    var time by remember {
-        mutableStateOf(
-            try {
-                LocalTime.parse(initialTime, DateTimeFormatter.ofPattern("hh:mm a"))
-            } catch (e: Exception) {
-                LocalTime.now()
-            }
-        )
-    }
-    var showTimePicker by remember { mutableStateOf(false) }
+    var selectedTime by remember { mutableStateOf(initialTime) }
 
     val recurrenceOptions = listOf("Daily", "Weekdays", "Weekends", "Weekly", "Monthly")
     var selectedRecurrence by remember {
@@ -178,19 +169,19 @@ fun AddRoutineDialog(
     }
     var expanded by remember { mutableStateOf(false) }
 
-    if (showTimePicker) {
-        LaunchedEffect(Unit) {
-            TimePickerDialog(
-                context,
-                { _, hour, minute ->
-                    time = LocalTime.of(hour, minute)
-                    showTimePicker = false
-                },
-                time.hour,
-                time.minute,
-                true
-            ).show()
-        }
+    // Function to show the time picker
+    fun showTimePicker() {
+        val currentTime = LocalTime.now()
+        TimePickerDialog(
+            context,
+            { _, hour, minute ->
+                val newTime = LocalTime.of(hour, minute)
+                selectedTime = newTime.format(DateTimeFormatter.ofPattern("hh:mm a"))
+            },
+            currentTime.hour,
+            currentTime.minute,
+            true
+        ).show()
     }
 
     AlertDialog(
@@ -205,15 +196,22 @@ fun AddRoutineDialog(
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth()
                 )
-                OutlinedTextField(
-                    value = time.format(DateTimeFormatter.ofPattern("hh:mm a")),
-                    onValueChange = {},
-                    label = { Text("Pick Time") },
-                    readOnly = true,
+                
+                // Time picker field - make the entire row clickable
+                Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .clickable { showTimePicker = true }
-                )
+                        .clickable(onClick = { showTimePicker() })
+                ) {
+                    OutlinedTextField(
+                        value = selectedTime,
+                        onValueChange = {},
+                        label = { Text("Pick Time") },
+                        readOnly = true,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
+                
                 ExposedDropdownMenuBox(
                     expanded = expanded,
                     onExpandedChange = { expanded = !expanded }
@@ -252,7 +250,7 @@ fun AddRoutineDialog(
                 if (name.isNotBlank()) {
                     onAdd(
                         name,
-                        time.format(DateTimeFormatter.ofPattern("hh:mm a")),
+                        selectedTime,
                         selectedRecurrence
                     )
                 }
