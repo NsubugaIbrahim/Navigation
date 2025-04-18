@@ -46,13 +46,25 @@ class ColorPreference(private val context: Context) {
     }
 }
 
+@Composable
+fun SectionHeader(title: String) {
+    Text(
+        text = title,
+        style = MaterialTheme.typography.titleMedium,
+        color = Color.Gray,
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(Color(0xFFF5F5F5))
+            .padding(horizontal = 16.dp, vertical = 8.dp)
+    )
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Settings(modifier: Modifier = Modifier) {
     // State variables for user settings
     var userName by remember { mutableStateOf("Kayiwa Rahim") }
     var userEmail by remember { mutableStateOf("kayiwa.rahim@students.mak.ac.ug") }
-    var selectedColor by remember { mutableStateOf(Color.Yellow) }
     var autoArmSecurityEnabled by remember { mutableStateOf(true) }
     var appNotificationsEnabled by remember { mutableStateOf(false) }
 
@@ -65,45 +77,29 @@ fun Settings(modifier: Modifier = Modifier) {
     val selectedColorState by colorPreference.appColor.collectAsStateWithLifecycle(initialValue = 0xFFFFC107)
     val scope = rememberCoroutineScope()
 
-    // Available app colors
-    val appColors = listOf(
-        0xFFFFC107L, // Amber
-        0xFF2196F3L, // Blue
-        0xFF4CAF50L, // Green
-        0xFFE91E63L, // Pink
-        0xFF9C27B0L  // Purple
-    )
-
-    Scaffold(
-        
-    ) { paddingValues ->
+    Scaffold { paddingValues ->
         Column(
             modifier = modifier
                 .fillMaxSize()
                 .padding(paddingValues)
                 .verticalScroll(rememberScrollState())
-                .background(Color(0xFFFDFCFC))
+                .background(Color.White)
         ) {
-
+            // User Settings Section
+            SectionHeader(title = "User Settings")
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .clickable { showEditUserDialog = true }
                     .padding(16.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Box(
-                    modifier = Modifier
-                        .size(40.dp)
-                        .background(Color.Yellow, CircleShape),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Person,
-                        contentDescription = "User",
-                        tint = Color.White
-                    )
-                }
-
+                Icon(
+                    imageVector = Icons.Default.Person,
+                    contentDescription = "User",
+                    tint = Color(0xFFFFC107),
+                    modifier = Modifier.size(24.dp)
+                )
                 Column(
                     modifier = Modifier
                         .weight(1f)
@@ -120,89 +116,92 @@ fun Settings(modifier: Modifier = Modifier) {
                         fontSize = 14.sp
                     )
                 }
-
-                IconButton(onClick = { showEditUserDialog = true }) {
-                    Icon(
-                        imageVector = Icons.Default.Edit,
-                        contentDescription = "Edit User",
-                        tint = Color.Gray
-                    )
-                }
             }
 
-            Divider()
+            // App Settings Section
+            SectionHeader(title = "App Settings")
 
             // App Color Setting
-            SettingItem(
-                title = "App Color:",
-                content = {
-                    Box(
-                        modifier = Modifier
-                            .size(24.dp)
-                            .background(Color(selectedColorState))
-                            .padding(4.dp)
-                    )
-                },
-                onClick = { showColorPicker = true }
-            )
-
-            // Auto Arm Security Alarm Setting
-            SettingItem(
-                title = "Auto Arm Security Alarm",
-                content = {
-                    Switch(
-                        checked = autoArmSecurityEnabled,
-                        onCheckedChange = { autoArmSecurityEnabled = it },
-                        thumbContent = if (autoArmSecurityEnabled) {
-                            {
-                                Icon(
-                                    imageVector = Icons.Filled.Check,
-                                    contentDescription = null,
-                                    modifier = Modifier.size(SwitchDefaults.IconSize)
-                                )
-                            }
-                        } else {
-                            null
-                        },
-                        colors = SwitchDefaults.colors(
-                            checkedThumbColor = Color.White,
-                            checkedTrackColor = Color.Yellow,
-                            checkedIconColor = Color.Yellow
-                        )
-                    )
-                }
-            )
-
-            // App Notifications Setting
-            SettingItem(
-                title = "App Notifications",
-                content = {
-                    Switch(
-                        checked = appNotificationsEnabled,
-                        onCheckedChange = { appNotificationsEnabled = it },
-                        colors = SwitchDefaults.colors(
-                            checkedThumbColor = Color.White,
-                            checkedTrackColor = Color.Yellow,
-                            checkedIconColor = Color.Yellow
-                        )
-                    )
-                }
-            )
-
-            Divider()
-
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .clickable { showColorPicker = true }
+                    .padding(16.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(
+                    text = "App Color:",
+                    fontWeight = FontWeight.Medium
+                )
+                Box(
+                    modifier = Modifier
+                        .size(24.dp)
+                        .background(Color(selectedColorState))
+                )
+            }
+
+            // Auto Arm Security Setting
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(
+                    text = "Auto Arm Security Alarm",
+                    fontWeight = FontWeight.Medium
+                )
+                Switch(
+                    checked = autoArmSecurityEnabled,
+                    onCheckedChange = { autoArmSecurityEnabled = it },
+                    colors = SwitchDefaults.colors(
+                        checkedThumbColor = Color.White,
+                        checkedTrackColor = Color(0xFFFFC107),
+                        checkedIconColor = Color(0xFFFFC107)
+                    )
+                )
+            }
+
+            // App Notifications Setting
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(
+                    text = "App Notifications",
+                    fontWeight = FontWeight.Medium
+                )
+                Switch(
+                    checked = appNotificationsEnabled,
+                    onCheckedChange = { appNotificationsEnabled = it },
+                    colors = SwitchDefaults.colors(
+                        checkedThumbColor = Color.White,
+                        checkedTrackColor = Color(0xFFFFC107),
+                        checkedIconColor = Color(0xFFFFC107)
+                    )
+                )
+            }
+
+            // Voice Section
+            SectionHeader(title = "Voice")
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable {  }
                     .padding(16.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Icon(
                     imageVector = Icons.Default.PlayArrow,
                     contentDescription = "Voice",
-                    tint = Color.Yellow
+                    tint = Color(0xFFFFC107),
+                    modifier = Modifier.size(24.dp)
                 )
-
                 Text(
                     text = "Voice Assistants",
                     modifier = Modifier
@@ -210,40 +209,29 @@ fun Settings(modifier: Modifier = Modifier) {
                         .padding(start = 16.dp),
                     fontWeight = FontWeight.Medium
                 )
-
-                Icon(
-                    imageVector = Icons.Default.KeyboardArrowRight,
-                    contentDescription = "Navigate",
-                    tint = Color.Gray
-                )
             }
 
-            Divider()
-
+            // App Permissions Section
+            SectionHeader(title = "App Permissions")
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .clickable {  }
                     .padding(16.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Icon(
                     imageVector = Icons.Default.Settings,
                     contentDescription = "Permissions",
-                    tint = Color.Gray
+                    tint = Color.Gray,
+                    modifier = Modifier.size(24.dp)
                 )
-
                 Text(
                     text = "Notifications & Permissions",
                     modifier = Modifier
                         .weight(1f)
                         .padding(start = 16.dp),
                     fontWeight = FontWeight.Medium
-                )
-
-                Icon(
-                    imageVector = Icons.Default.KeyboardArrowRight,
-                    contentDescription = "Navigate",
-                    tint = Color.Gray
                 )
             }
         }
@@ -265,9 +253,7 @@ fun Settings(modifier: Modifier = Modifier) {
                         label = { Text("Name") },
                         modifier = Modifier.fillMaxWidth()
                     )
-
                     Spacer(modifier = Modifier.height(8.dp))
-
                     OutlinedTextField(
                         value = tempEmail,
                         onValueChange = { tempEmail = it },
@@ -306,34 +292,24 @@ fun Settings(modifier: Modifier = Modifier) {
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceEvenly
                     ) {
-                        appColors.take(3).forEach { color ->
-                            ColorOption(
-                                color = Color(color),
-                                isSelected = color == selectedColorState,
-                                onClick = {
-                                    scope.launch {
-                                        colorPreference.saveAppColor(color)
+                        val colors = listOf(
+                            0xFFFFC107L, // Amber
+                            0xFF2196F3L, // Blue
+                            0xFF4CAF50L, // Green
+                            0xFFE91E63L, // Pink
+                            0xFF9C27B0L  // Purple
+                        )
+                        colors.forEach { color ->
+                            Box(
+                                modifier = Modifier
+                                    .size(48.dp)
+                                    .clickable {
+                                        scope.launch {
+                                            colorPreference.saveAppColor(color)
+                                        }
+                                        showColorPicker = false
                                     }
-                                }
-                            )
-                        }
-                    }
-
-                    Spacer(modifier = Modifier.height(16.dp))
-
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceEvenly
-                    ) {
-                        appColors.takeLast(3).forEach { color ->
-                            ColorOption(
-                                color = Color(color),
-                                isSelected = color == selectedColorState,
-                                onClick = {
-                                    scope.launch {
-                                        colorPreference.saveAppColor(color)
-                                    }
-                                }
+                                    .background(Color(color))
                             )
                         }
                     }
@@ -353,47 +329,47 @@ fun SettingItem(
     title: String,
     content: @Composable () -> Unit,
     onClick: () -> Unit = {}
-) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable(onClick = onClick)
-            .padding(16.dp),
-        verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(
-            text = title,
-            modifier = Modifier.weight(1f),
-            fontWeight = FontWeight.Medium
-        )
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable(onClick = onClick)
+                .padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = title,
+                modifier = Modifier.weight(1f),
+                fontWeight = FontWeight.Medium
+            )
 
-        content()
+            content()
+        }
     }
-}
 
 @Composable
 fun ColorOption(
     color: Color,
     isSelected: Boolean,
-    onClick: () -> Unit
-) {
-    Box(
-        modifier = Modifier
-            .size(48.dp)
-            .padding(4.dp)
-            .clickable(onClick = onClick)
+        onClick: () -> Unit
     ) {
         Box(
             modifier = Modifier
-                .size(40.dp)
-                .background(color, CircleShape)
-                .then(
-                    if (isSelected) {
-                        Modifier.border(2.dp, Color.Black, CircleShape)
-                    } else {
-                        Modifier
-                    }
-                )
-        )
+                .size(48.dp)
+                .padding(4.dp)
+                .clickable(onClick = onClick)
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(40.dp)
+                    .background(color, CircleShape)
+                    .then(
+                        if (isSelected) {
+                            Modifier.border(2.dp, Color.Black, CircleShape)
+                        } else {
+                            Modifier
+                        }
+                    )
+            )
+        }
     }
-}

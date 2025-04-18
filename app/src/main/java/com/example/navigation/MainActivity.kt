@@ -62,6 +62,9 @@ class MainActivity : ComponentActivity() {
                         composable("routines") {
                             Routines()
                         }
+                        composable("ideas"){
+                            Ideas()
+                        }
                         composable("settings") {
                             Settings()
                         }
