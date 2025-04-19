@@ -27,63 +27,9 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.longPreferencesKey
-import androidx.datastore.preferences.core.stringPreferencesKey
-import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
-
-class UserPreferences(private val context: Context) {
-    private val USER_NAME_KEY = stringPreferencesKey("user_name")
-    private val USER_EMAIL_KEY = stringPreferencesKey("user_email")
-    private val AUTO_ARM_KEY = booleanPreferencesKey("auto_arm")
-    private val APP_NOTIFICATIONS_KEY = booleanPreferencesKey("app_notifications")
-
-    val userName: Flow<String> = context.dataStore.data
-        .map { preferences ->
-            preferences[USER_NAME_KEY] ?: "Kayiwa Rahim"
-        }
-
-    val userEmail: Flow<String> = context.dataStore.data
-        .map { preferences ->
-            preferences[USER_EMAIL_KEY] ?: "kayiwa.rahim@students.mak.ac.ug"
-        }
-
-    val autoArm: Flow<Boolean> = context.dataStore.data
-        .map { preferences ->
-            preferences[AUTO_ARM_KEY] ?: true
-        }
-
-    val appNotifications: Flow<Boolean> = context.dataStore.data
-        .map { preferences ->
-            preferences[APP_NOTIFICATIONS_KEY] ?: false
-        }
-
-    suspend fun saveUserName(name: String) {
-        context.dataStore.edit { preferences ->
-            preferences[USER_NAME_KEY] = name
-        }
-    }
-
-    suspend fun saveUserEmail(email: String) {
-        context.dataStore.edit { preferences ->
-            preferences[USER_EMAIL_KEY] = email
-        }
-    }
-
-    suspend fun saveAutoArm(enabled: Boolean) {
-        context.dataStore.edit { preferences ->
-            preferences[AUTO_ARM_KEY] = enabled
-        }
-    }
-
-    suspend fun saveAppNotifications(enabled: Boolean) {
-        context.dataStore.edit { preferences ->
-            preferences[APP_NOTIFICATIONS_KEY] = enabled
-        }
-    }
-
-}
 
 class ColorPreference(private val context: Context) {
     private val APP_COLOR_KEY = longPreferencesKey("app_color")
@@ -123,12 +69,9 @@ fun Settings(modifier: Modifier = Modifier) {
     val selectedColorState by colorPreference.appColor.collectAsStateWithLifecycle(initialValue = 0xFFFFC107)
     val scope = rememberCoroutineScope()
 
-
-    // State for dialogs
     var showEditUserDialog by remember { mutableStateOf(false) }
     var showColorPicker by remember { mutableStateOf(false) }
 
-    // Available app colors
     val appColors = listOf(
         0xFFFFC107L, // Amber
         0xFF2196F3L, // Blue
@@ -145,7 +88,6 @@ fun Settings(modifier: Modifier = Modifier) {
                 .verticalScroll(rememberScrollState())
                 .background(Color.White)
         ) {
-            // User Settings Section
             SectionHeader(title = "User Settings")
             Row(
                 modifier = Modifier
@@ -178,10 +120,8 @@ fun Settings(modifier: Modifier = Modifier) {
                 }
             }
 
-            // App Settings Section
             SectionHeader(title = "App Settings")
 
-            // App Color Setting
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -201,7 +141,6 @@ fun Settings(modifier: Modifier = Modifier) {
                 )
             }
 
-            // Auto Arm Security Setting
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -227,7 +166,6 @@ fun Settings(modifier: Modifier = Modifier) {
                 )
             }
 
-            // App Notifications Setting
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -253,7 +191,6 @@ fun Settings(modifier: Modifier = Modifier) {
                 )
             }
 
-            // Voice Section
             SectionHeader(title = "Voice")
             Row(
                 modifier = Modifier
@@ -277,7 +214,6 @@ fun Settings(modifier: Modifier = Modifier) {
                 )
             }
 
-            // App Permissions Section
             SectionHeader(title = "App Permissions")
             Row(
                 modifier = Modifier
@@ -303,7 +239,6 @@ fun Settings(modifier: Modifier = Modifier) {
         }
     }
 
-    // Edit User Dialog
     if (showEditUserDialog) {
         var tempName by remember { mutableStateOf(settings.name) }
         var tempEmail by remember { mutableStateOf(settings.email) }
@@ -376,7 +311,6 @@ fun Settings(modifier: Modifier = Modifier) {
         }
     }
 
-    // Color Picker Dialog
     if (showColorPicker) {
         AlertDialog(
             onDismissRequest = { showColorPicker = false },
@@ -428,30 +362,6 @@ fun Settings(modifier: Modifier = Modifier) {
         )
     }
 
-@Composable
-fun SettingItem(
-    title: String,
-    content: @Composable () -> Unit,
-    onClick: () -> Unit = {}
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .clickable(onClick = onClick)
-                .padding(16.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = title,
-                modifier = Modifier.weight(1f),
-                fontWeight = FontWeight.Medium
-            )
-
-            content()
-        }
-    }
 }
-
-
 
 

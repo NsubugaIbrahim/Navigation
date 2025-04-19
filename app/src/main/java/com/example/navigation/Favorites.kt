@@ -3,12 +3,10 @@ package com.example.navigation
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
@@ -33,7 +31,7 @@ fun Favorites(modifier: Modifier = Modifier) {
         modifier = modifier
             .fillMaxSize()
             .background(Color.White)
-            .padding(20.dp), // Ensures it does not overlap the topBar and bottomBar
+            .padding(20.dp),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -48,10 +46,10 @@ fun Favorites(modifier: Modifier = Modifier) {
 @Composable
 fun StarImage() {
     Image(
-        painter = painterResource(id = R.drawable.star_mark_svgrepo_com), // Replace with your vector asset ID
-        contentDescription = "Star", // Accessibility description
-        modifier = Modifier.size(200.dp), // Set the size of the image
-        colorFilter = ColorFilter.tint(Color.Gray) // Change the color to gray
+        painter = painterResource(id = R.drawable.star_mark_svgrepo_com),
+        contentDescription = "Star",
+        modifier = Modifier.size(200.dp),
+        colorFilter = ColorFilter.tint(Color.Gray)
     )
 }
 
@@ -68,7 +66,7 @@ fun AddCircle(icon: ImageVector, tint: Color = Color.Black) {
             imageVector = icon,
             contentDescription = "Add Circle",
             modifier = Modifier.size(50.dp),
-            tint = tint // Apply color tint here
+            tint = tint
         )
     }
 }

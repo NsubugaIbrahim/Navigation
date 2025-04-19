@@ -16,16 +16,13 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Email
-import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
@@ -33,12 +30,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.StrokeCap
-import androidx.compose.ui.graphics.drawscope.Stroke
 
 
 
@@ -65,8 +57,6 @@ fun Things(modifier: Modifier = Modifier){
     }
 }
 
-
-
 @Composable
 fun OptionItem(icon: ImageVector, text: String, tint: Color = Color.White) {
     Row(
@@ -75,18 +65,17 @@ fun OptionItem(icon: ImageVector, text: String, tint: Color = Color.White) {
             .padding(vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        // Circle container for the icon
         Box(
             contentAlignment = Alignment.Center,
             modifier = Modifier
-                .size(50.dp) // Circle size
-                .background(Color(0xFF03A9F4), shape = CircleShape) // Light blue background
+                .size(50.dp)
+                .background(Color(0xFF03A9F4), shape = CircleShape)
         ) {
             Icon(
                 imageVector = icon,
                 contentDescription = text,
                 modifier = Modifier.size(30.dp),
-                tint = tint // Apply the tint color here
+                tint = tint
             )
         }
 
@@ -99,7 +88,6 @@ fun OptionItem(icon: ImageVector, text: String, tint: Color = Color.White) {
         )
     }
 }
-
 
 @Composable
 fun OptionsList() {
@@ -118,8 +106,8 @@ fun OptionsList() {
 @Composable
 fun ThingsIcon() {
     Image(
-        painter = painterResource(id = R.drawable.baseline_format_list_bulleted_24), // Replace with your vector asset ID
-        contentDescription = "Things", // Accessibility description
-        modifier = Modifier.size(200.dp), // Set the size of the image
+        painter = painterResource(id = R.drawable.baseline_format_list_bulleted_24),
+        contentDescription = "Things",
+        modifier = Modifier.size(200.dp),
     )
 }

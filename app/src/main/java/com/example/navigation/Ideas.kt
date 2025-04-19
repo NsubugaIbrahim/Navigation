@@ -26,7 +26,7 @@ fun Ideas(modifier: Modifier = Modifier) {
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // Add your content here
+
         }
     }
 }

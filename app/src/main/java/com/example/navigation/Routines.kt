@@ -4,7 +4,6 @@ import android.app.TimePickerDialog
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Refresh
@@ -20,7 +19,6 @@ import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
-import androidx.compose.foundation.interaction.MutableInteractionSource
 
 data class Routine(val name: String, val time: String, val recurrence: String)
 
@@ -30,12 +28,10 @@ fun Routines() {
     val context = LocalContext.current
     val dbHelper = remember { RoutineDatabaseHelper(context) }
     val routines = remember { mutableStateListOf<Routine>() }
-    val pickedTime = remember { mutableStateOf(LocalTime.now()) }
     var showDialog by remember { mutableStateOf(false) }
     var showEditDialog by remember { mutableStateOf(false) }
-    var routineToEditIndex by remember { mutableStateOf(-1) }
+    var routineToEditIndex by remember { mutableIntStateOf(-1) }
 
-    // Load routines from database when composable is first created
     LaunchedEffect(Unit) {
         routines.clear()
         routines.addAll(dbHelper.getAllRoutines())
@@ -169,7 +165,6 @@ fun AddRoutineDialog(
     }
     var expanded by remember { mutableStateOf(false) }
 
-    // Function to show the time picker
     fun showTimePicker() {
         val currentTime = LocalTime.now()
         TimePickerDialog(
@@ -196,8 +191,7 @@ fun AddRoutineDialog(
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth()
                 )
-                
-                // Time picker field - make the entire row clickable
+
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
