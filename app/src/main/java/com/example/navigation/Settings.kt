@@ -38,7 +38,6 @@ class UserPreferences(private val context: Context) {
     private val USER_EMAIL_KEY = stringPreferencesKey("user_email")
     private val AUTO_ARM_KEY = booleanPreferencesKey("auto_arm")
     private val APP_NOTIFICATIONS_KEY = booleanPreferencesKey("app_notifications")
-    private val APP_COLOR_KEY = longPreferencesKey("app_color")
 
     val userName: Flow<String> = context.dataStore.data
         .map { preferences ->
@@ -58,11 +57,6 @@ class UserPreferences(private val context: Context) {
     val appNotifications: Flow<Boolean> = context.dataStore.data
         .map { preferences ->
             preferences[APP_NOTIFICATIONS_KEY] ?: false
-        }
-
-    val appColor: Flow<Long> = context.dataStore.data
-        .map { preferences ->
-            preferences[APP_COLOR_KEY] ?: 0xFFFFC107
         }
 
     suspend fun saveUserName(name: String) {
@@ -89,13 +83,22 @@ class UserPreferences(private val context: Context) {
         }
     }
 
+}
+
+class ColorPreference(private val context: Context) {
+    private val APP_COLOR_KEY = longPreferencesKey("app_color")
+
+    val appColor: Flow<Long> = context.dataStore.data
+        .map { preferences ->
+            preferences[APP_COLOR_KEY] ?: 0xFFFFC107 // Default color
+        }
+
     suspend fun saveAppColor(color: Long) {
         context.dataStore.edit { preferences ->
             preferences[APP_COLOR_KEY] = color
         }
     }
 }
-
 @Composable
 fun SectionHeader(title: String) {
     Text(
@@ -115,10 +118,24 @@ fun Settings(modifier: Modifier = Modifier) {
     val context = LocalContext.current
     val database = remember { SettingsDatabaseHelper(context) }
     var settings by remember { mutableStateOf(database.getSettings()) }
+    var selectedColor by remember { mutableStateOf(Color.Yellow) }
+    val colorPreference = remember { ColorPreference(context) }
+    val selectedColorState by colorPreference.appColor.collectAsStateWithLifecycle(initialValue = 0xFFFFC107)
+    val scope = rememberCoroutineScope()
+
 
     // State for dialogs
     var showEditUserDialog by remember { mutableStateOf(false) }
     var showColorPicker by remember { mutableStateOf(false) }
+
+    // Available app colors
+    val appColors = listOf(
+        0xFFFFC107L, // Amber
+        0xFF2196F3L, // Blue
+        0xFF4CAF50L, // Green
+        0xFFE91E63L, // Pink
+        0xFF9C27B0L  // Purple
+    )
 
     Scaffold { paddingValues ->
         Column(
@@ -180,7 +197,7 @@ fun Settings(modifier: Modifier = Modifier) {
                 Box(
                     modifier = Modifier
                         .size(24.dp)
-                        .background(Color(settings.appColor))
+                        .background(Color(selectedColorState))
                 )
             }
 
@@ -332,6 +349,32 @@ fun Settings(modifier: Modifier = Modifier) {
             }
         )
     }
+    @Composable
+    fun ColorOption(
+        color: Color,
+        isSelected: Boolean,
+        onClick: () -> Unit
+    ) {
+        Box(
+            modifier = Modifier
+                .size(48.dp)
+                .padding(4.dp)
+                .clickable(onClick = onClick)
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(40.dp)
+                    .background(color, CircleShape)
+                    .then(
+                        if (isSelected) {
+                            Modifier.border(2.dp, Color.Black, CircleShape)
+                        } else {
+                            Modifier
+                        }
+                    )
+            )
+        }
+    }
 
     // Color Picker Dialog
     if (showColorPicker) {
@@ -344,23 +387,34 @@ fun Settings(modifier: Modifier = Modifier) {
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceEvenly
                     ) {
-                        val colors = listOf(
-                            0xFFFFC107L,
-                            0xFF2196F3L,
-                            0xFF4CAF50L,
-                            0xFFE91E63L,
-                            0xFF9C27B0L
-                        )
-                        colors.forEach { color ->
-                            Box(
-                                modifier = Modifier
-                                    .size(48.dp)
-                                    .clickable {
-                                        settings = settings.copy(appColor = color)
-                                        database.updateSettings(settings)
-                                        showColorPicker = false
+                        appColors.take(3).forEach { color ->
+                            ColorOption(
+                                color = Color(color),
+                                isSelected = color == selectedColorState,
+                                onClick = {
+                                    scope.launch {
+                                        colorPreference.saveAppColor(color)
                                     }
-                                    .background(Color(color))
+                                }
+                            )
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceEvenly
+                    ) {
+                        appColors.takeLast(3).forEach { color ->
+                            ColorOption(
+                                color = Color(color),
+                                isSelected = color == selectedColorState,
+                                onClick = {
+                                    scope.launch {
+                                        colorPreference.saveAppColor(color)
+                                    }
+                                }
                             )
                         }
                     }
@@ -373,7 +427,6 @@ fun Settings(modifier: Modifier = Modifier) {
             }
         )
     }
-}
 
 @Composable
 fun SettingItem(
@@ -397,30 +450,8 @@ fun SettingItem(
             content()
         }
     }
+}
 
-@Composable
-fun ColorOption(
-    color: Color,
-    isSelected: Boolean,
-        onClick: () -> Unit
-    ) {
-        Box(
-            modifier = Modifier
-                .size(48.dp)
-                .padding(4.dp)
-                .clickable(onClick = onClick)
-        ) {
-            Box(
-                modifier = Modifier
-                    .size(40.dp)
-                    .background(color, CircleShape)
-                    .then(
-                        if (isSelected) {
-                            Modifier.border(2.dp, Color.Black, CircleShape)
-                        } else {
-                            Modifier
-                        }
-                    )
-            )
-        }
-    }
+
+
+
