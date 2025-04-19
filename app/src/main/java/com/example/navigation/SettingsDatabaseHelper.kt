@@ -30,8 +30,7 @@ class SettingsDatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATAB
             )
         """.trimIndent()
         db.execSQL(createTable)
-        
-        // Insert default values
+
         val defaultValues = ContentValues().apply {
             put(COLUMN_NAME, "Kayiwa Rahim")
             put(COLUMN_EMAIL, "kayiwa.rahim@students.mak.ac.ug")
@@ -66,7 +65,7 @@ class SettingsDatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATAB
                 notifications = cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_NOTIFICATIONS)) == 1
             )
         } else {
-            Settings() // Return default values
+            Settings()
         }.also {
             cursor.close()
         }
@@ -81,7 +80,6 @@ class SettingsDatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATAB
             put(COLUMN_NOTIFICATIONS, if (settings.notifications) 1 else 0)
         }
 
-        // Update first row or insert if none exists
         val rowsAffected = db.update(TABLE_NAME, values, "$COLUMN_ID = 1", null)
         if (rowsAffected == 0) {
             db.insert(TABLE_NAME, null, values)

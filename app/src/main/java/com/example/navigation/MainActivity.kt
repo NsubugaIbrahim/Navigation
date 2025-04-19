@@ -37,9 +37,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.navigation.ui.theme.NavigationTheme
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.collectAsState
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.example.navigation.SettingsDatabaseHelper.Settings
 import com.example.navigation.Settings as SettingsScreen
 
 class MainActivity : ComponentActivity() {
