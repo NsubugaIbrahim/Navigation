@@ -55,7 +55,7 @@ dependencies {
     implementation(libs.androidx.compose.material3.material3)
     implementation("androidx.datastore:datastore-preferences:1.0.0")
     implementation("androidx.datastore:datastore-preferences-core:1.1.4")
-
+    androidTestImplementation("androidx.compose.ui:ui-test-junit4:1.6.4")
     implementation("androidx.room:room-runtime:$room_version")
     implementation("androidx.room:room-ktx:$room_version")
     kapt("androidx.room:room-compiler:$room_version")

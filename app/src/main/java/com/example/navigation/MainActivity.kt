@@ -37,7 +37,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.navigation.ui.theme.NavigationTheme
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.runtime.remember
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
+//import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.navigation.Settings as SettingsScreen
 
 class MainActivity : ComponentActivity() {
@@ -85,8 +85,8 @@ fun MyTopAppBar(navController: NavController) {
     val database = remember { SettingsDatabaseHelper(context) }
     var settings by remember { mutableStateOf(database.getSettings()) }
 
-    val colorPreference = remember { ColorPreference(context) }
-    val selectedColorState = colorPreference.appColor.collectAsStateWithLifecycle(initialValue = 0xFFFFC107)
+//    val colorPreference = remember { ColorPreference(context) }
+//    val selectedColorState = colorPreference.appColor.collectAsStateWithLifecycle(initialValue = 0xFFFFC107)
 
     TopAppBar(
         title = {
@@ -116,7 +116,7 @@ fun MyTopAppBar(navController: NavController) {
                 }
             }
         },
-        colors = TopAppBarDefaults.topAppBarColors(containerColor = Color(selectedColorState.value))
+        //colors = TopAppBarDefaults.topAppBarColors(containerColor = Color(selectedColorState.value))
     )
 }
 
