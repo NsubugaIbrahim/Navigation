@@ -127,6 +127,11 @@ fun MyTopAppBar(navController: NavController) {
 @Composable
 fun MyBottomAppBar(navController: NavController) {
     BottomAppBar(contentColor = Color.Gray) {
+        val viewModel: SettingsViewModel = viewModel()
+        val settings by viewModel.settings.collectAsStateWithLifecycle(initialValue = SettingsEntity())
+        val currentColor = remember(settings.appColor) { Color(settings.appColor) }
+
+
         val items = listOf(
             BottomNavItem("favorites", Icons.Default.Star, "Favorites"),
             BottomNavItem("things", Icons.Default.List, "Things"),
@@ -146,7 +151,8 @@ fun MyBottomAppBar(navController: NavController) {
                     Icon(
                         imageVector = item.icon,
                         contentDescription = item.label,
-                        tint = if (currentRoute == item.route) Color(0xFFFFC107) else Color.Gray
+                        tint = if (currentRoute == item.route) currentColor else Color.Gray
+
                     )
                     Text(
                         text = item.label,
