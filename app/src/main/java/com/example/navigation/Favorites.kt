@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -48,7 +49,7 @@ fun StarImage() {
     Image(
         painter = painterResource(id = R.drawable.star_mark_svgrepo_com),
         contentDescription = "Star",
-        modifier = Modifier.size(200.dp),
+        modifier = Modifier.size(80.dp),
         colorFilter = ColorFilter.tint(Color.Gray)
     )
 }
@@ -58,14 +59,14 @@ fun AddCircle(icon: ImageVector, tint: Color = Color.Black) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .fillMaxHeight(0.5f),
+            .fillMaxHeight(0.6f),
         verticalArrangement = Arrangement.Bottom,
         horizontalAlignment = Alignment.End
     ) {
         Icon(
             imageVector = icon,
             contentDescription = "Add Circle",
-            modifier = Modifier.size(50.dp),
+            modifier = Modifier.size(70.dp),
             tint = tint
         )
     }

@@ -114,6 +114,11 @@ fun MyTopAppBar(navController: NavController) {
                     Icon(imageVector = Icons.Default.Menu, contentDescription = "Menu", tint = Color.White)
                 }
             }
+            else if ( currentRoute == "routines"){
+                IconButton(onClick = { /* TODO: Action */ }) {
+                    Icon(imageVector = Icons.Default.Menu, contentDescription = "Menu", tint = Color.White)
+                }
+            }
         },
         colors = TopAppBarDefaults.topAppBarColors(containerColor = currentColor)
     )

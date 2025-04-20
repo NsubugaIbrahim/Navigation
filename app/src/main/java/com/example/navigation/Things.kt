@@ -31,7 +31,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.foundation.shape.CircleShape
-
+import androidx.compose.material3.Divider
 
 
 @Composable
@@ -51,6 +51,7 @@ fun Things(modifier: Modifier = Modifier){
             Text(text = "It looks like we didn't discover any devices \n", style = TextStyle(color = Color.Gray, fontSize = 20.sp), textAlign = TextAlign.Center)
             Text(text = "Try an option below ", style = TextStyle(color = Color.Gray, fontSize = 20.sp), textAlign = TextAlign.Center)
 
+            Divider()
             OptionsList()
 
         }
@@ -62,7 +63,7 @@ fun OptionItem(icon: ImageVector, text: String, tint: Color = Color.White) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 8.dp),
+            .padding(vertical = 5.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Box(
@@ -108,6 +109,6 @@ fun ThingsIcon() {
     Image(
         painter = painterResource(id = R.drawable.baseline_format_list_bulleted_24),
         contentDescription = "Things",
-        modifier = Modifier.size(200.dp),
+        modifier = Modifier.size(180.dp),
     )
 }

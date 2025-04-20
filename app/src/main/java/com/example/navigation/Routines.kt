@@ -57,10 +57,10 @@ fun Routines() {
                 Icon(
                     imageVector = Icons.Default.Refresh,
                     contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f),
-                    modifier = Modifier.size(60.dp)
+                    tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f),
+                    modifier = Modifier.size(10.dp)
                 )
-                Spacer(modifier = Modifier.height(12.dp))
+                Spacer(modifier = Modifier.height(18.dp))
                 Text("No Routines!", fontWeight = FontWeight.Bold)
                 Text("Click the '+' button below to get started")
             }
@@ -175,7 +175,7 @@ fun AddRoutineDialog(
     }
     var showTimePicker by remember { mutableStateOf(false) }
 
-    val recurrenceOptions = listOf("Daily", "Weekdays", "Weekends", "Weekly", "Monthly")
+    val recurrenceOptions = listOf("Daily", "Weekdays", "Weekends", "Weekly", "Monthly" ,"Yearly")
     var selectedRecurrence by remember {
         mutableStateOf(if (initialRecurrence in recurrenceOptions) initialRecurrence else recurrenceOptions[0])
     }
