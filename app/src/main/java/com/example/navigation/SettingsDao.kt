@@ -21,4 +21,7 @@ interface SettingsDao {
 
     @Query("SELECT EXISTS(SELECT 1 FROM settings WHERE id = 1)")
     suspend fun hasSettings(): Boolean
+
+    @Query("UPDATE settings SET appColor = :color WHERE id = 1")
+    suspend fun updateAppColor(color: Long)
 }

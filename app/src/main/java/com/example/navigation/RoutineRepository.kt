@@ -1,7 +1,7 @@
-package com.example.navigation.data.repository
+package com.example.navigation
 
-import com.example.navigation.data.dao.RoutineDao
-import com.example.navigation.data.entity.RoutineEntity
+import com.example.navigation.RoutineDao
+import com.example.navigation.RoutineEntity
 import kotlinx.coroutines.flow.Flow
 
 class RoutineRepository(private val routineDao: RoutineDao) {

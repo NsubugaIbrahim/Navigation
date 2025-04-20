@@ -21,7 +21,7 @@ import java.time.format.DateTimeFormatter
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.navigation.data.entity.RoutineEntity
+import com.example.navigation.RoutineEntity
 import com.example.navigation.viewmodel.RoutineViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 

@@ -1,4 +1,4 @@
-package com.example.navigation.data.dao
+package com.example.navigation
 
 import androidx.room.Dao
 import androidx.room.Delete
@@ -6,7 +6,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
-import com.example.navigation.data.entity.RoutineEntity
+import com.example.navigation.RoutineEntity
 import kotlinx.coroutines.flow.Flow
 
 @Dao
