@@ -1,4 +1,4 @@
-package com.example.navigation.data.entity
+package com.example.navigation
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey

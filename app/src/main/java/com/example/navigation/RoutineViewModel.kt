@@ -4,8 +4,8 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.navigation.AppDatabase
-import com.example.navigation.data.entity.RoutineEntity
-import com.example.navigation.data.repository.RoutineRepository
+import com.example.navigation.RoutineEntity
+import com.example.navigation.RoutineRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 
