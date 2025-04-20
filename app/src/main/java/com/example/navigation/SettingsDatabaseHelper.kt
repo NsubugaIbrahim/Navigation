@@ -17,7 +17,6 @@ class SettingsDatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATAB
         private const val COLUMN_EMAIL = "email"
         private const val COLUMN_AUTO_ARM = "auto_arm"
         private const val COLUMN_NOTIFICATIONS = "notifications"
-        private const val COLUMN_APP_COLOR = "app_color"
     }
 
     override fun onCreate(db: SQLiteDatabase) {
@@ -27,19 +26,16 @@ class SettingsDatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATAB
                 $COLUMN_NAME TEXT NOT NULL,
                 $COLUMN_EMAIL TEXT NOT NULL,
                 $COLUMN_AUTO_ARM INTEGER NOT NULL,
-                $COLUMN_NOTIFICATIONS INTEGER NOT NULL,
-                $COLUMN_APP_COLOR INTEGER NOT NULL
+                $COLUMN_NOTIFICATIONS INTEGER NOT NULL
             )
         """.trimIndent()
         db.execSQL(createTable)
-        
-        // Insert default values
+
         val defaultValues = ContentValues().apply {
             put(COLUMN_NAME, "Kayiwa Rahim")
             put(COLUMN_EMAIL, "kayiwa.rahim@students.mak.ac.ug")
             put(COLUMN_AUTO_ARM, 1) // true
             put(COLUMN_NOTIFICATIONS, 0) // false
-            put(COLUMN_APP_COLOR, 0xFFFFC107) // amber color
         }
         db.insert(TABLE_NAME, null, defaultValues)
     }
@@ -66,11 +62,10 @@ class SettingsDatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATAB
                 name = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_NAME)),
                 email = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_EMAIL)),
                 autoArm = cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_AUTO_ARM)) == 1,
-                notifications = cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_NOTIFICATIONS)) == 1,
-                appColor = cursor.getLong(cursor.getColumnIndexOrThrow(COLUMN_APP_COLOR))
+                notifications = cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_NOTIFICATIONS)) == 1
             )
         } else {
-            Settings() // Return default values
+            Settings()
         }.also {
             cursor.close()
         }
@@ -83,10 +78,8 @@ class SettingsDatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATAB
             put(COLUMN_EMAIL, settings.email)
             put(COLUMN_AUTO_ARM, if (settings.autoArm) 1 else 0)
             put(COLUMN_NOTIFICATIONS, if (settings.notifications) 1 else 0)
-            put(COLUMN_APP_COLOR, settings.appColor)
         }
 
-        // Update first row or insert if none exists
         val rowsAffected = db.update(TABLE_NAME, values, "$COLUMN_ID = 1", null)
         if (rowsAffected == 0) {
             db.insert(TABLE_NAME, null, values)
@@ -97,7 +90,6 @@ class SettingsDatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATAB
         val name: String = "Kayiwa Rahim",
         val email: String = "kayiwa.rahim@students.mak.ac.ug",
         val autoArm: Boolean = true,
-        val notifications: Boolean = false,
-        val appColor: Long = 0xFFFFC107
+        val notifications: Boolean = false
     )
 } 
