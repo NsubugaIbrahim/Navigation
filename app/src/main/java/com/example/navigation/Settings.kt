@@ -42,7 +42,6 @@ fun Settings(modifier: Modifier = Modifier) {
     val viewModel: SettingsViewModel = viewModel()
     val settings by viewModel.settings.collectAsStateWithLifecycle(initialValue = SettingsEntity())
 
-    // State for dialogs
     var showEditUserDialog by remember { mutableStateOf(false) }
     var showColorPicker by remember { mutableStateOf(false) }
 
@@ -54,7 +53,6 @@ fun Settings(modifier: Modifier = Modifier) {
                 .verticalScroll(rememberScrollState())
                 .background(Color.White)
         ) {
-            // User Settings Section
             SectionHeader(title = "User Settings")
             Row(
                 modifier = Modifier
@@ -87,10 +85,8 @@ fun Settings(modifier: Modifier = Modifier) {
                 }
             }
 
-            // App Settings Section
             SectionHeader(title = "App Settings")
 
-            // App Color Setting
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -110,7 +106,6 @@ fun Settings(modifier: Modifier = Modifier) {
                 )
             }
 
-            // Auto Arm Security Setting
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -137,7 +132,6 @@ fun Settings(modifier: Modifier = Modifier) {
                 )
             }
 
-            // App Notifications Setting
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -164,7 +158,6 @@ fun Settings(modifier: Modifier = Modifier) {
                 )
             }
 
-            // Voice Section
             SectionHeader(title = "Voice")
             Row(
                 modifier = Modifier
@@ -188,7 +181,6 @@ fun Settings(modifier: Modifier = Modifier) {
                 )
             }
 
-            // App Permissions Section
             SectionHeader(title = "App Permissions")
             Row(
                 modifier = Modifier
@@ -214,7 +206,6 @@ fun Settings(modifier: Modifier = Modifier) {
         }
     }
 
-    // Edit User Dialog
     if (showEditUserDialog) {
         var tempName by remember { mutableStateOf(settings.name) }
         var tempEmail by remember { mutableStateOf(settings.email) }
@@ -262,7 +253,6 @@ fun Settings(modifier: Modifier = Modifier) {
         )
     }
 
-    // Color Picker Dialog
     if (showColorPicker) {
         AlertDialog(
             onDismissRequest = { showColorPicker = false },
@@ -323,7 +313,6 @@ fun SettingItem(
             modifier = Modifier.weight(1f),
             fontWeight = FontWeight.Medium
         )
-
         content()
     }
 }
