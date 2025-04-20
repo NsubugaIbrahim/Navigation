@@ -1,6 +1,5 @@
 package com.example.navigation
 
-import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -19,82 +18,10 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.launch
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.navigation.SettingsEntity
+import com.example.navigation.viewmodel.SettingsViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.core.edit
-import androidx.datastore.preferences.core.longPreferencesKey
-import androidx.datastore.preferences.core.stringPreferencesKey
-import androidx.datastore.preferences.core.booleanPreferencesKey
-import androidx.datastore.preferences.preferencesDataStore
-
-private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
-
-class UserPreferences(private val context: Context) {
-    private val USER_NAME_KEY = stringPreferencesKey("user_name")
-    private val USER_EMAIL_KEY = stringPreferencesKey("user_email")
-    private val AUTO_ARM_KEY = booleanPreferencesKey("auto_arm")
-    private val APP_NOTIFICATIONS_KEY = booleanPreferencesKey("app_notifications")
-    private val APP_COLOR_KEY = longPreferencesKey("app_color")
-
-    val userName: Flow<String> = context.dataStore.data
-        .map { preferences ->
-            preferences[USER_NAME_KEY] ?: "Kayiwa Rahim"
-        }
-
-    val userEmail: Flow<String> = context.dataStore.data
-        .map { preferences ->
-            preferences[USER_EMAIL_KEY] ?: "kayiwa.rahim@students.mak.ac.ug"
-        }
-
-    val autoArm: Flow<Boolean> = context.dataStore.data
-        .map { preferences ->
-            preferences[AUTO_ARM_KEY] ?: true
-        }
-
-    val appNotifications: Flow<Boolean> = context.dataStore.data
-        .map { preferences ->
-            preferences[APP_NOTIFICATIONS_KEY] ?: false
-        }
-
-    val appColor: Flow<Long> = context.dataStore.data
-        .map { preferences ->
-            preferences[APP_COLOR_KEY] ?: 0xFFFFC107
-        }
-
-    suspend fun saveUserName(name: String) {
-        context.dataStore.edit { preferences ->
-            preferences[USER_NAME_KEY] = name
-        }
-    }
-
-    suspend fun saveUserEmail(email: String) {
-        context.dataStore.edit { preferences ->
-            preferences[USER_EMAIL_KEY] = email
-        }
-    }
-
-    suspend fun saveAutoArm(enabled: Boolean) {
-        context.dataStore.edit { preferences ->
-            preferences[AUTO_ARM_KEY] = enabled
-        }
-    }
-
-    suspend fun saveAppNotifications(enabled: Boolean) {
-        context.dataStore.edit { preferences ->
-            preferences[APP_NOTIFICATIONS_KEY] = enabled
-        }
-    }
-
-    suspend fun saveAppColor(color: Long) {
-        context.dataStore.edit { preferences ->
-            preferences[APP_COLOR_KEY] = color
-        }
-    }
-}
 
 @Composable
 fun SectionHeader(title: String) {
@@ -112,9 +39,8 @@ fun SectionHeader(title: String) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Settings(modifier: Modifier = Modifier) {
-    val context = LocalContext.current
-    val database = remember { SettingsDatabaseHelper(context) }
-    var settings by remember { mutableStateOf(database.getSettings()) }
+    val viewModel: SettingsViewModel = viewModel()
+    val settings by viewModel.settings.collectAsStateWithLifecycle(initialValue = SettingsEntity())
 
     // State for dialogs
     var showEditUserDialog by remember { mutableStateOf(false) }
@@ -198,9 +124,8 @@ fun Settings(modifier: Modifier = Modifier) {
                 )
                 Switch(
                     checked = settings.autoArm,
-                    onCheckedChange = { 
-                        settings = settings.copy(autoArm = it)
-                        database.updateSettings(settings)
+                    onCheckedChange = {
+                        viewModel.updateAutoArm(it)
                     },
                     colors = SwitchDefaults.colors(
                         checkedThumbColor = Color.White,
@@ -224,9 +149,8 @@ fun Settings(modifier: Modifier = Modifier) {
                 )
                 Switch(
                     checked = settings.notifications,
-                    onCheckedChange = { 
-                        settings = settings.copy(notifications = it)
-                        database.updateSettings(settings)
+                    onCheckedChange = {
+                        viewModel.updateAppNotifications(it)
                     },
                     colors = SwitchDefaults.colors(
                         checkedThumbColor = Color.White,
@@ -314,11 +238,12 @@ fun Settings(modifier: Modifier = Modifier) {
             confirmButton = {
                 TextButton(
                     onClick = {
-                        settings = settings.copy(
-                            name = tempName,
-                            email = tempEmail
+                        viewModel.updateSettings(
+                            settings.copy(
+                                name = tempName,
+                                email = tempEmail
+                            )
                         )
-                        database.updateSettings(settings)
                         showEditUserDialog = false
                     }
                 ) {
@@ -356,8 +281,7 @@ fun Settings(modifier: Modifier = Modifier) {
                                 modifier = Modifier
                                     .size(48.dp)
                                     .clickable {
-                                        settings = settings.copy(appColor = color)
-                                        database.updateSettings(settings)
+                                        viewModel.updateAppColor(color)
                                         showColorPicker = false
                                     }
                                     .background(Color(color))
@@ -380,47 +304,47 @@ fun SettingItem(
     title: String,
     content: @Composable () -> Unit,
     onClick: () -> Unit = {}
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(onClick = onClick)
+            .padding(16.dp),
+        verticalAlignment = Alignment.CenterVertically
     ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .clickable(onClick = onClick)
-                .padding(16.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = title,
-                modifier = Modifier.weight(1f),
-                fontWeight = FontWeight.Medium
-            )
+        Text(
+            text = title,
+            modifier = Modifier.weight(1f),
+            fontWeight = FontWeight.Medium
+        )
 
-            content()
-        }
+        content()
     }
+}
 
 @Composable
 fun ColorOption(
     color: Color,
     isSelected: Boolean,
-        onClick: () -> Unit
+    onClick: () -> Unit
+) {
+    Box(
+        modifier = Modifier
+            .size(48.dp)
+            .padding(4.dp)
+            .clickable(onClick = onClick)
     ) {
         Box(
             modifier = Modifier
-                .size(48.dp)
-                .padding(4.dp)
-                .clickable(onClick = onClick)
-        ) {
-            Box(
-                modifier = Modifier
-                    .size(40.dp)
-                    .background(color, CircleShape)
-                    .then(
-                        if (isSelected) {
-                            Modifier.border(2.dp, Color.Black, CircleShape)
-                        } else {
-                            Modifier
-                        }
-                    )
-            )
-        }
+                .size(40.dp)
+                .background(color, CircleShape)
+                .then(
+                    if (isSelected) {
+                        Modifier.border(2.dp, Color.Black, CircleShape)
+                    } else {
+                        Modifier
+                    }
+                )
+        )
     }
+}

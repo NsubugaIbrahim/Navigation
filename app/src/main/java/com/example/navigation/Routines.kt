@@ -20,25 +20,21 @@ import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
-
-data class Routine(val name: String, val time: String, val recurrence: String)
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.navigation.data.entity.RoutineEntity
+import com.example.navigation.viewmodel.RoutineViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 
 @Composable
 @Preview
 fun Routines() {
-    val context = LocalContext.current
-    val dbHelper = remember { RoutineDatabaseHelper(context) }
-    val routines = remember { mutableStateListOf<Routine>() }
+    val viewModel: RoutineViewModel = viewModel()
+    val routines by viewModel.allRoutines.collectAsStateWithLifecycle(initialValue = emptyList())
+
     val pickedTime = remember { mutableStateOf(LocalTime.now()) }
     var showDialog by remember { mutableStateOf(false) }
     var showEditDialog by remember { mutableStateOf(false) }
-    var routineToEditIndex by remember { mutableStateOf(-1) }
-
-    // Load routines from database when composable is first created
-    LaunchedEffect(Unit) {
-        routines.clear()
-        routines.addAll(dbHelper.getAllRoutines())
-    }
+    var routineToEdit by remember { mutableStateOf<RoutineEntity?>(null) }
 
     Scaffold(
         floatingActionButton = {
@@ -75,8 +71,7 @@ fun Routines() {
                     .padding(paddingValues)
                     .padding(12.dp)
             ) {
-                items(routines.size) { index ->
-                    val routine = routines[index]
+                items(routines) { routine ->
                     Card(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -95,15 +90,14 @@ fun Routines() {
                                 horizontalArrangement = Arrangement.spacedBy(8.dp)
                             ) {
                                 OutlinedButton(onClick = {
-                                    routineToEditIndex = index
+                                    routineToEdit = routine
                                     showEditDialog = true
                                 }) {
                                     Text("Edit")
                                 }
                                 OutlinedButton(
                                     onClick = {
-                                        dbHelper.deleteRoutine(index + 1)
-                                        routines.removeAt(index)
+                                        viewModel.deleteRoutine(routine.id)
                                     },
                                     colors = ButtonDefaults.outlinedButtonColors(
                                         contentColor = MaterialTheme.colorScheme.error
@@ -122,28 +116,37 @@ fun Routines() {
     if (showDialog) {
         AddRoutineDialog(
             onAdd = { name, time, recurrence ->
-                val routine = Routine(name, time, recurrence)
-                dbHelper.addRoutine(routine)
-                routines.add(routine)
+                val routine = RoutineEntity(
+                    name = name,
+                    time = time,
+                    recurrence = recurrence
+                )
+                viewModel.insertRoutine(routine)
                 showDialog = false
             },
             onCancel = { showDialog = false }
         )
     }
 
-    if (showEditDialog) {
-        val routineToEdit = routines[routineToEditIndex]
+    if (showEditDialog && routineToEdit != null) {
         AddRoutineDialog(
             onAdd = { name, time, recurrence ->
-                val updatedRoutine = Routine(name, time, recurrence)
-                dbHelper.updateRoutine(routineToEditIndex + 1, updatedRoutine)
-                routines[routineToEditIndex] = updatedRoutine
+                val updatedRoutine = routineToEdit!!.copy(
+                    name = name,
+                    time = time,
+                    recurrence = recurrence
+                )
+                viewModel.updateRoutine(updatedRoutine)
                 showEditDialog = false
+                routineToEdit = null
             },
-            onCancel = { showEditDialog = false },
-            initialName = routineToEdit.name,
-            initialTime = routineToEdit.time,
-            initialRecurrence = routineToEdit.recurrence
+            onCancel = {
+                showEditDialog = false
+                routineToEdit = null
+            },
+            initialName = routineToEdit!!.name,
+            initialTime = routineToEdit!!.time,
+            initialRecurrence = routineToEdit!!.recurrence
         )
     }
 }
