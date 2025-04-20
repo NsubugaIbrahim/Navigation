@@ -124,13 +124,15 @@ fun Settings(modifier: Modifier = Modifier) {
                 )
                 Switch(
                     checked = settings.autoArm,
-                    onCheckedChange = {
-                        viewModel.updateAutoArm(it)
+                    onCheckedChange = { newValue ->
+                        if (newValue != settings.autoArm) {
+                            viewModel.updateAutoArm(newValue)
+                        }
                     },
                     colors = SwitchDefaults.colors(
                         checkedThumbColor = Color.White,
-                        checkedTrackColor = Color(0xFFFFC107),
-                        checkedIconColor = Color(0xFFFFC107)
+                        checkedTrackColor = Color(settings.appColor),
+                        checkedIconColor = Color(settings.appColor)
                     )
                 )
             }
@@ -149,13 +151,15 @@ fun Settings(modifier: Modifier = Modifier) {
                 )
                 Switch(
                     checked = settings.notifications,
-                    onCheckedChange = {
-                        viewModel.updateAppNotifications(it)
+                    onCheckedChange = { newValue ->
+                        if (newValue != settings.notifications) {
+                            viewModel.updateAppNotifications(newValue)
+                        }
                     },
                     colors = SwitchDefaults.colors(
                         checkedThumbColor = Color.White,
-                        checkedTrackColor = Color(0xFFFFC107),
-                        checkedIconColor = Color(0xFFFFC107)
+                        checkedTrackColor = Color(settings.appColor),
+                        checkedIconColor = Color(settings.appColor)
                     )
                 )
             }
@@ -281,7 +285,9 @@ fun Settings(modifier: Modifier = Modifier) {
                                 modifier = Modifier
                                     .size(48.dp)
                                     .clickable {
-                                        viewModel.updateAppColor(color)
+                                        if (color != settings.appColor) {
+                                            viewModel.updateAppColor(color)
+                                        }
                                         showColorPicker = false
                                     }
                                     .background(Color(color))
