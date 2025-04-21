@@ -3,6 +3,7 @@ package com.example.navigation
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -28,19 +29,34 @@ import androidx.compose.ui.unit.sp
 
 @Composable
 fun Favorites(modifier: Modifier = Modifier) {
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .background(Color.White)
-            .padding(30.dp),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        StarImage()
-        Text(text = "No Favorites!", style = TextStyle(color = Color.Gray, fontSize = 30.sp))
-        Text(text = "\n Add your favorite routines for easy access here \n", style = TextStyle(color = Color.Gray, fontSize = 20.sp), textAlign = TextAlign.Center)
-        Text(text = "Tap the '+' button below to add your favorite routines.", style = TextStyle(color = Color.Gray, fontSize = 20.sp), textAlign = TextAlign.Center)
-        AddCircle(icon = Icons.Default.AddCircle, tint = Color(0xFF03A9F4))
+    Box(modifier = Modifier.fillMaxSize()) {
+        Column(
+            modifier = modifier
+                .fillMaxSize()
+                .background(Color.White)
+                .padding(30.dp),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            StarImage()
+            Text(text = "No Favorites!", style = TextStyle(color = Color.Gray, fontSize = 30.sp))
+            Text(text = "\n Add your favorite routines for easy access here \n", style = TextStyle(color = Color.Gray, fontSize = 20.sp), textAlign = TextAlign.Center)
+            Text(text = "Tap the '+' button below to add your favorite routines.", style = TextStyle(color = Color.Gray, fontSize = 20.sp), textAlign = TextAlign.Center)
+        }
+
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(20.dp),
+            contentAlignment = Alignment.BottomEnd
+        ) {
+            Icon(
+                imageVector = Icons.Default.AddCircle,
+                contentDescription = "Add Favorite",
+                modifier = Modifier.size(80.dp),
+                tint = Color(0xFF03A9F4)
+            )
+        }
     }
 }
 
@@ -52,22 +68,4 @@ fun StarImage() {
         modifier = Modifier.size(90.dp),
         colorFilter = ColorFilter.tint(Color.Gray)
     )
-}
-
-@Composable
-fun AddCircle(icon: ImageVector, tint: Color = Color.Black) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .fillMaxHeight(0.2f),
-        verticalArrangement = Arrangement.Bottom,
-        horizontalAlignment = Alignment.End
-    ) {
-        Icon(
-            imageVector = icon,
-            contentDescription = "Add Circle",
-            modifier = Modifier.size(70.dp),
-            tint = tint
-        )
-    }
 }
