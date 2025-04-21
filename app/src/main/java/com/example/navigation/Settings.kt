@@ -8,6 +8,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Mic
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -45,164 +46,162 @@ fun Settings(modifier: Modifier = Modifier) {
     var showEditUserDialog by remember { mutableStateOf(false) }
     var showColorPicker by remember { mutableStateOf(false) }
 
-    Scaffold { paddingValues ->
-        Column(
-            modifier = modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-                .verticalScroll(rememberScrollState())
-                .background(Color.White)
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
+            .background(Color.White)
+            .padding(top = 116.dp)
+    ) {
+        SectionHeader(title = "User Settings")
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable { showEditUserDialog = true }
+                .padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            SectionHeader(title = "User Settings")
-            Row(
+            Icon(
+                imageVector = Icons.Default.Person,
+                contentDescription = "User",
+                tint = Color(0xFFFFC107),
+                modifier = Modifier.size(24.dp)
+            )
+            Column(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable { showEditUserDialog = true }
-                    .padding(16.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Person,
-                    contentDescription = "User",
-                    tint = Color(0xFFFFC107),
-                    modifier = Modifier.size(24.dp)
-                )
-                Column(
-                    modifier = Modifier
-                        .weight(1f)
-                        .padding(start = 16.dp)
-                ) {
-                    Text(
-                        text = settings.name,
-                        fontWeight = FontWeight.Medium,
-                        fontSize = 16.sp
-                    )
-                    Text(
-                        text = settings.email,
-                        color = Color.Gray,
-                        fontSize = 14.sp
-                    )
-                }
-            }
-
-            SectionHeader(title = "App Settings")
-
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable { showColorPicker = true }
-                    .padding(16.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
+                    .weight(1f)
+                    .padding(start = 16.dp)
             ) {
                 Text(
-                    text = "App Color:",
-                    fontWeight = FontWeight.Medium
-                )
-                Box(
-                    modifier = Modifier
-                        .size(24.dp)
-                        .background(Color(settings.appColor))
-                )
-            }
-
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Text(
-                    text = "Auto Arm Security Alarm",
-                    fontWeight = FontWeight.Medium
-                )
-                Switch(
-                    checked = settings.autoArm,
-                    onCheckedChange = { newValue ->
-                        if (newValue != settings.autoArm) {
-                            viewModel.updateAutoArm(newValue)
-                        }
-                    },
-                    colors = SwitchDefaults.colors(
-                        checkedThumbColor = Color.White,
-                        checkedTrackColor = Color(settings.appColor),
-                        checkedIconColor = Color(settings.appColor)
-                    )
-                )
-            }
-
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Text(
-                    text = "App Notifications",
-                    fontWeight = FontWeight.Medium
-                )
-                Switch(
-                    checked = settings.notifications,
-                    onCheckedChange = { newValue ->
-                        if (newValue != settings.notifications) {
-                            viewModel.updateAppNotifications(newValue)
-                        }
-                    },
-                    colors = SwitchDefaults.colors(
-                        checkedThumbColor = Color.White,
-                        checkedTrackColor = Color(settings.appColor),
-                        checkedIconColor = Color(settings.appColor)
-                    )
-                )
-            }
-
-            SectionHeader(title = "Voice")
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable {  }
-                    .padding(16.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Icon(
-                    imageVector = Icons.Default.PlayArrow,
-                    contentDescription = "Voice",
-                    tint = Color(0xFFFFC107),
-                    modifier = Modifier.size(24.dp)
+                    text = settings.name,
+                    fontWeight = FontWeight.Medium,
+                    fontSize = 16.sp
                 )
                 Text(
-                    text = "Voice Assistants",
-                    modifier = Modifier
-                        .weight(1f)
-                        .padding(start = 16.dp),
-                    fontWeight = FontWeight.Medium
+                    text = settings.email,
+                    color = Color.Gray,
+                    fontSize = 14.sp
                 )
             }
+        }
 
-            SectionHeader(title = "App Permissions")
-            Row(
+        SectionHeader(title = "App Settings")
+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable { showColorPicker = true }
+                .padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text(
+                text = "App Color:",
+                fontWeight = FontWeight.Medium
+            )
+            Box(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable {  }
-                    .padding(16.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Settings,
-                    contentDescription = "Permissions",
-                    tint = Color.Gray,
-                    modifier = Modifier.size(24.dp)
+                    .size(24.dp)
+                    .background(Color(settings.appColor))
+            )
+        }
+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text(
+                text = "Auto Arm Security Alarm",
+                fontWeight = FontWeight.Medium
+            )
+            Switch(
+                checked = settings.autoArm,
+                onCheckedChange = { newValue ->
+                    if (newValue != settings.autoArm) {
+                        viewModel.updateAutoArm(newValue)
+                    }
+                },
+                colors = SwitchDefaults.colors(
+                    checkedThumbColor = Color.White,
+                    checkedTrackColor = Color(settings.appColor),
+                    checkedIconColor = Color(settings.appColor)
                 )
-                Text(
-                    text = "Notifications & Permissions",
-                    modifier = Modifier
-                        .weight(1f)
-                        .padding(start = 16.dp),
-                    fontWeight = FontWeight.Medium
+            )
+        }
+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text(
+                text = "App Notifications",
+                fontWeight = FontWeight.Medium
+            )
+            Switch(
+                checked = settings.notifications,
+                onCheckedChange = { newValue ->
+                    if (newValue != settings.notifications) {
+                        viewModel.updateAppNotifications(newValue)
+                    }
+                },
+                colors = SwitchDefaults.colors(
+                    checkedThumbColor = Color.White,
+                    checkedTrackColor = Color(settings.appColor),
+                    checkedIconColor = Color(settings.appColor)
                 )
-            }
+            )
+        }
+
+        SectionHeader(title = "Voice")
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable {  }
+                .padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                imageVector = Icons.Default.Mic,
+                contentDescription = "Voice",
+                tint = Color(0xFFFFC107),
+                modifier = Modifier.size(24.dp)
+            )
+            Text(
+                text = "Voice Assistants",
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(start = 16.dp),
+                fontWeight = FontWeight.Medium
+            )
+        }
+
+        SectionHeader(title = "App Permissions")
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable {  }
+                .padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                imageVector = Icons.Default.Settings,
+                contentDescription = "Permissions",
+                tint = Color.Gray,
+                modifier = Modifier.size(24.dp)
+            )
+            Text(
+                text = "Notifications & Permissions",
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(start = 16.dp),
+                fontWeight = FontWeight.Medium
+            )
         }
     }
 

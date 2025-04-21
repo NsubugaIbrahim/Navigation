@@ -42,7 +42,9 @@ fun Things(modifier: Modifier = Modifier){
         verticalArrangement = Arrangement.SpaceBetween,
         horizontalAlignment = Alignment.CenterHorizontally){
 
-        Column (modifier = Modifier.fillMaxSize().background(Color.White).padding(40.dp),
+        Column (modifier = Modifier.fillMaxSize()
+            .background(Color.White)
+            .padding(top = 120.dp, start = 40.dp, end = 40.dp, bottom = 40.dp),
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally){
 
@@ -109,6 +111,6 @@ fun ThingsIcon() {
     Image(
         painter = painterResource(id = R.drawable.baseline_format_list_bulleted_24),
         contentDescription = "Things",
-        modifier = Modifier.size(180.dp),
+        modifier = Modifier.size(160.dp),
     )
 }
