@@ -8,7 +8,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-//import androidx.compose.material.icons.filled.Mic
+import androidx.compose.material.icons.filled.Mic
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -167,7 +167,7 @@ fun Settings(modifier: Modifier = Modifier) {
             verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(
-                imageVector = Icons.Default.PlayArrow,
+                imageVector = Icons.Default.Mic,
                 contentDescription = "Voice",
                 tint = Color(0xFFFFC107),
                 modifier = Modifier.size(24.dp)
