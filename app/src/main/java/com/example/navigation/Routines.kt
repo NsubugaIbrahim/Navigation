@@ -6,7 +6,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -23,33 +23,22 @@ import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.navigation.viewmodel.RoutineViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.compose.ui.graphics.Color
 
 @Composable
 @Preview
 fun Routines() {
     val viewModel: RoutineViewModel = viewModel()
     val routines by viewModel.allRoutines.collectAsStateWithLifecycle(initialValue = emptyList())
-
-    val pickedTime = remember { mutableStateOf(LocalTime.now()) }
     var showDialog by remember { mutableStateOf(false) }
     var showEditDialog by remember { mutableStateOf(false) }
     var routineToEdit by remember { mutableStateOf<RoutineEntity?>(null) }
 
-    Scaffold(
-        floatingActionButton = {
-            FloatingActionButton(
-                onClick = { showDialog = true },
-                containerColor = MaterialTheme.colorScheme.primary
-            ) {
-                Icon(Icons.Default.Add, contentDescription = "Add Routine")
-            }
-        }
-    ) { paddingValues ->
+    Box(modifier = Modifier.fillMaxSize()) {
         if (routines.isEmpty()) {
             Column(
                 modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues),
+                    .fillMaxSize(),
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
@@ -67,7 +56,6 @@ fun Routines() {
             LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(paddingValues)
                     .padding(12.dp)
             ) {
                 items(routines) { routine ->
@@ -109,6 +97,22 @@ fun Routines() {
                     }
                 }
             }
+        }
+
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(20.dp),
+            contentAlignment = Alignment.BottomEnd
+        ) {
+            Icon(
+                imageVector = Icons.Default.AddCircle,
+                contentDescription = "Add Routine",
+                modifier = Modifier
+                    .size(80.dp)
+                    .clickable { showDialog = true },
+                tint = Color(0xFF03A9F4)
+            )
         }
     }
 
@@ -160,9 +164,7 @@ fun AddRoutineDialog(
     initialRecurrence: String = "Daily"
 ) {
     val context = LocalContext.current
-
     var name by remember { mutableStateOf(initialName) }
-
     var time by remember {
         mutableStateOf(
             try {
