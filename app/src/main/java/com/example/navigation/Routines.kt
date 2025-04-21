@@ -24,6 +24,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.navigation.viewmodel.RoutineViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.sp
 
 @Composable
 @Preview
@@ -49,8 +50,8 @@ fun Routines() {
                     modifier = Modifier.size(80.dp)
                 )
                 Spacer(modifier = Modifier.height(18.dp))
-                Text("No Routines!", fontWeight = FontWeight.Bold)
-                Text("Click the '+' button below to get started")
+                Text("No Routines!", fontWeight = FontWeight.Bold ,fontSize = 25.sp)
+                Text("Click the '+' button below to get started" , fontSize = 20.sp)
             }
         } else {
             LazyColumn(
