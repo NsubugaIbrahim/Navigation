@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="200dp"
+    android:height="40dp"
+    android:viewportWidth="200"
+    android:viewportHeight="40">
+    <text
+        android:fontFamily="sans-serif-medium"
+        android:textSize="30sp"
+        android:textColor="#FFC107"
+        android:text="Smart Home"
+        android:gravity="center"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+</vector>
