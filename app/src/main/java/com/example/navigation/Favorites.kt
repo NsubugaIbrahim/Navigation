@@ -32,7 +32,7 @@ fun Favorites(modifier: Modifier = Modifier) {
         modifier = modifier
             .fillMaxSize()
             .background(Color.White)
-            .padding(20.dp),
+            .padding(30.dp),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -49,7 +49,7 @@ fun StarImage() {
     Image(
         painter = painterResource(id = R.drawable.star_mark_svgrepo_com),
         contentDescription = "Star",
-        modifier = Modifier.size(80.dp),
+        modifier = Modifier.size(90.dp),
         colorFilter = ColorFilter.tint(Color.Gray)
     )
 }
@@ -59,7 +59,7 @@ fun AddCircle(icon: ImageVector, tint: Color = Color.Black) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .fillMaxHeight(0.6f),
+            .fillMaxHeight(0.2f),
         verticalArrangement = Arrangement.Bottom,
         horizontalAlignment = Alignment.End
     ) {

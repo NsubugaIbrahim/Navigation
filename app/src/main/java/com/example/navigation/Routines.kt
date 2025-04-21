@@ -21,7 +21,6 @@ import java.time.format.DateTimeFormatter
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.navigation.RoutineEntity
 import com.example.navigation.viewmodel.RoutineViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 
@@ -58,7 +57,7 @@ fun Routines() {
                     imageVector = Icons.Default.Refresh,
                     contentDescription = null,
                     tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f),
-                    modifier = Modifier.size(10.dp)
+                    modifier = Modifier.size(80.dp)
                 )
                 Spacer(modifier = Modifier.height(18.dp))
                 Text("No Routines!", fontWeight = FontWeight.Bold)
