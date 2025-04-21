@@ -39,7 +39,8 @@ fun Routines() {
         if (routines.isEmpty()) {
             Column(
                 modifier = Modifier
-                    .fillMaxSize(),
+                    .fillMaxSize()
+                    .padding(top = 116.dp),
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
@@ -57,7 +58,7 @@ fun Routines() {
             LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(12.dp)
+                    .padding(top = 116.dp, start = 12.dp, end = 12.dp, bottom = 12.dp)
             ) {
                 items(routines) { routine ->
                     Card(
