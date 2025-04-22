@@ -105,6 +105,16 @@ fun Routines() {
                                 ) {
                                     Text("Delete")
                                 }
+                                OutlinedButton(
+                                    onClick = {
+                                        viewModel.duplicateRoutine(routine.id)
+                                    },
+                                    colors = ButtonDefaults.outlinedButtonColors(
+                                        contentColor = MaterialTheme.colorScheme.error
+                                    )
+                                ){
+                                        Text("Duplicate")
+                                    }
                             }
                         }
                     }

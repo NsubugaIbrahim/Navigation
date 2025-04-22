@@ -23,4 +23,13 @@ class RoutineRepository(private val routineDao: RoutineDao) {
     suspend fun getRoutineById(id: Int): RoutineEntity? {
         return routineDao.getRoutineById(id)
     }
+
+    //duplicate Routine
+    suspend fun duplicateRoutine(originalId: Int){
+        val original = routineDao.getRoutineById(originalId)
+        if (original != null){
+            val duplicate = original.copy(id = 0, name = original.name + " (Copy) ")
+            routineDao.insertRoutine(duplicate)
+        }
+    }
 }

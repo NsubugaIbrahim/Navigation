@@ -31,4 +31,8 @@ class RoutineViewModel(application: Application) : AndroidViewModel(application)
     fun deleteRoutine(id: Int) = viewModelScope.launch {
         repository.deleteRoutine(id)
     }
+
+    fun duplicateRoutine(originalId: Int) = viewModelScope.launch {
+        repository.duplicateRoutine(originalId)
+    }
 }
